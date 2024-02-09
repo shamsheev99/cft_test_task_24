@@ -4,6 +4,8 @@ import confighandlers.DefaultConfigBuilder;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -35,17 +37,27 @@ public class OptionsHandler {
         return resultOptions;
     }
 
-    public static Properties convertOptionsToProperties(Option[] options) {
-        HashMap<String, String> templateMapForConvert = DefaultConfigBuilder.CreateConfig.getDefaultHashMap();
-        Properties properties = new Properties();
+    public static HashMap<String, String> convertOptionsToMap(Option[] options) {
+        HashMap<String, String> resultMapForConvert = DefaultConfigBuilder.CreateConfig.getDefaultHashMap();
         for (Option option : options) {
-            if (option.getValue() == null) {
-                templateMapForConvert.put(option.getOpt(), "true");
+            if (option.getOpt().equals("o")) {
+                if (checkCorrectDirectory(option.getValue())) {
+                    resultMapForConvert.put(option.getOpt(), option.getValue());
+                } else {
+                    System.out.println(option.getValue() + " is not a directory");
+                }
+            }else if (option.getValue() == null) {
+                resultMapForConvert.put(option.getOpt(), "true");
             } else {
-                templateMapForConvert.put(option.getOpt(), option.getValue());
+                resultMapForConvert.put(option.getOpt(), option.getValue());
             }
         }
-        properties.putAll(templateMapForConvert);
-        return properties;
+
+        return resultMapForConvert;
     }
+
+    private static boolean checkCorrectDirectory(String directory) {
+        return (Files.isDirectory(Path.of(directory)));
+    }
+
 }
