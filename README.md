@@ -11,7 +11,7 @@ The task of the utility is to write different types of data to different output 
                 floats.txt for float type values  
                 strings.txt for string type valuse  
 ### Flags 
-  -a - turn on overwrite output files  
+  -a - turn off overwrite output files  
   -o - output path for result  
   -p - set prefix for output files  
   -s - short statistic on result type values  
