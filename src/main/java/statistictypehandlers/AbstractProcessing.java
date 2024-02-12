@@ -1,4 +1,4 @@
-package typehandlers;
+package statistictypehandlers;
 
 public abstract class AbstractProcessing {
 }
