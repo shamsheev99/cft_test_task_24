@@ -1,8 +1,6 @@
 package statistictypehandlers;
 
-import java.util.HashMap;
-
-public abstract class AbstractProcessing {
+public abstract class AbstractStatisticHandler {
     protected boolean statisticFlag;
     protected int count = 0;
     protected Object min;
@@ -10,7 +8,7 @@ public abstract class AbstractProcessing {
     protected Object average;
     protected Object sum;
 
-    public AbstractProcessing(boolean statisticFlag) {
+    public AbstractStatisticHandler(boolean statisticFlag) {
         this.statisticFlag = statisticFlag;
     }
 

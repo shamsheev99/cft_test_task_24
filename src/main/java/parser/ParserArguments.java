@@ -1,11 +1,8 @@
 package parser;
 
-import confighandlers.DefaultConfigBuilder;
+import defaultargs.DefaultMap;
 import org.apache.commons.cli.*;
 
-import java.io.FileNotFoundException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 
@@ -20,11 +17,11 @@ public class ParserArguments {
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         Options options = OptionsHandler.setOptions();
-        HashMap<String, String> parsedArgs = DefaultConfigBuilder.CreateConfig.getDefaultHashMap();
+        HashMap<String, String> parsedArgs = DefaultMap.getDefaultHashMap();
         try {
             CommandLine cmdLine = parser.parse(options, args, false);
             parsedArgs = OptionsHandler.convertOptionsToMap(cmdLine.getOptions());
-            parsedArgs.put("files", fromArrayListToStringCurrentFormat(checkCorrectFiles(cmdLine.getArgList())));
+            parsedArgs.put("files", fromListToStringCurrentFormat(cmdLine.getArgList()));
             return parsedArgs;
         } catch (ParseException e) {
             System.out.println("Error parsing arguments, using default settings" + e.getMessage());
@@ -33,7 +30,8 @@ public class ParserArguments {
         }
     }
 
-    private static String fromArrayListToStringCurrentFormat(ArrayList<String> list) {
+
+    private static String fromListToStringCurrentFormat(List<String> list) {
         StringBuilder result = new StringBuilder();
         for (String item : list) {
             result.append(item);
@@ -42,24 +40,5 @@ public class ParserArguments {
         return result.toString();
     }
 
-
-    private static ArrayList<String> checkCorrectFiles(List<String> files) {
-        ArrayList<String> correctFiles = new ArrayList<>();
-        for (String it : files) {
-            try {
-                if (checkValidPathFile(it)) correctFiles.add(it);
-            } catch (FileNotFoundException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        return correctFiles;
-    }
-
-    private static boolean checkValidPathFile(String currentPath) throws FileNotFoundException {
-        Path p = Path.of(currentPath);
-        System.out.println(p + " -------------");
-        if (Files.exists(p) && Files.isWritable(p) && !Files.isDirectory(p)) return true;
-        throw new FileNotFoundException("File " + p + " not found");
-    }
 
 }

@@ -1,8 +1,8 @@
 package statistictypehandlers.types;
 
-import statistictypehandlers.AbstractProcessing;
+import statistictypehandlers.AbstractStatisticHandler;
 
-public class IntegerType extends AbstractProcessing {
+public class IntegerType extends AbstractStatisticHandler {
     public IntegerType(boolean statisticFlag) {
         super(statisticFlag);
         min = 0;
@@ -14,11 +14,16 @@ public class IntegerType extends AbstractProcessing {
     @Override
     public void pushStatistic(Object value) {
         Integer data = (Integer)value;
+        if (count == 0) {
+            min = Integer.MAX_VALUE;
+            max = Integer.MIN_VALUE;
+        }
         count++;
         sum = (Integer) sum + data;
-        if (data > (Integer)min) min = data;
+        if (data < (Integer)min) min = data;
         if (data > (Integer)max) max = data;
         average = (Integer)sum / count;
+
     }
 
     @Override
@@ -26,10 +31,10 @@ public class IntegerType extends AbstractProcessing {
         System.out.println("-----------------------------------------------");
         System.out.println("Количество элементов типа Integer: " + count);
         if (statisticFlag) {
-            System.out.println("Минимальное значение: "+(Integer)min);
-            System.out.println("Максимальное значение: "+(Integer)max);
-            System.out.println("Сумма значений: "+(Integer)sum);
-            System.out.println("Среднее значение: "+(Integer)average);
+            System.out.println("Минимальное значение: "+min);
+            System.out.println("Максимальное значение: "+max);
+            System.out.println("Сумма значений: "+sum);
+            System.out.println("Среднее значение: "+average);
         }
     }
 }

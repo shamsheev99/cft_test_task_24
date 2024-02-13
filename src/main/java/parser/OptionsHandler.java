@@ -1,13 +1,12 @@
 package parser;
 
-import confighandlers.DefaultConfigBuilder;
+import defaultargs.DefaultMap;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.Properties;
 
 public class OptionsHandler {
     public static Options setOptions() {
@@ -38,15 +37,15 @@ public class OptionsHandler {
     }
 
     public static HashMap<String, String> convertOptionsToMap(Option[] options) {
-        HashMap<String, String> resultMapForConvert = DefaultConfigBuilder.CreateConfig.getDefaultHashMap();
+        HashMap<String, String> resultMapForConvert = DefaultMap.getDefaultHashMap();
         for (Option option : options) {
-            if (option.getOpt().equals("o")) {
-                if (checkCorrectDirectory(option.getValue())) {
-                    resultMapForConvert.put(option.getOpt(), option.getValue());
-                } else {
-                    System.out.println(option.getValue() + " is not a directory");
-                }
-            }else if (option.getValue() == null) {
+            if (option.getOpt().equals("s")) {
+                resultMapForConvert.put("s", "1");
+            }
+            if (option.getOpt().equals("f")) {
+                resultMapForConvert.put("f", "2");
+            }
+                if (option.getValue() == null) {
                 resultMapForConvert.put(option.getOpt(), "true");
             } else {
                 resultMapForConvert.put(option.getOpt(), option.getValue());

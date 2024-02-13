@@ -1,28 +1,47 @@
 package filehadlers;
-import filehadlers.filewriters.FileWriterFloat;
-import filehadlers.filewriters.FileWriterInteger;
-import filehadlers.filewriters.FileWriterString;
-import statistictypehandlers.AbstractProcessing;
-import statistictypehandlers.types.FloatType;
-import statistictypehandlers.types.IntegerType;
-import statistictypehandlers.types.StringType;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NotDirectoryException;
+import java.nio.file.Path;
 import java.util.*;
 
 public class FilesHandler {
     private List<String> path = new ArrayList<>();
-    private final String outputPath;
-    private final boolean overwrite;
-    private final int statistic;
+    private String outputPath;
+    private boolean overwrite;
+    private String statistic;
 
 
-    public FilesHandler(String filePaths, String outputPath, String prefix, boolean overwrite, int statistic) {
-        this.outputPath = outputPath + prefix;
-        this.overwrite = overwrite;
-        this.statistic = statistic;
-        convertToList(filePaths);
-        checkType();
+    public FilesHandler(HashMap<String, String> parameters) {
+        setMapParameters(parameters);
+    }
+
+    private void setMapParameters(HashMap<String, String> parameters) {
+        try {
+            checkValidPathFile(parameters.get("o"));
+            this.outputPath = parameters.get("o");
+        } catch (NotDirectoryException e) {
+            System.out.println(e.getMessage() + " Use default directory ./");
+            this.outputPath = "./";
+        }
+        if (!outputPath.endsWith("/")) outputPath += "/";
+        outputPath += parameters.get("p");
+        this.overwrite = parameters.get("a").equals("true");
+        this.statistic = parameters.get("s");
+        convertToList(parameters.get("files"));
+
+    }
+
+    private static void checkValidPathFile(String currentPath) throws NotDirectoryException {
+        Path p = Path.of(currentPath);
+        if (Files.isWritable(p) && Files.isDirectory(p)) {
+            System.out.println("zxczxc");
+            return;
+        }
+        throw new NotDirectoryException("Directory " + p + " not found");
     }
 
     private void convertToList(String filePaths) {
@@ -30,71 +49,39 @@ public class FilesHandler {
     }
 
     public void checkType() {
-        FileWriterAbstract fwInteger;
-        FileWriterAbstract fwFloat;
-        FileWriterAbstract fwString;
-        AbstractProcessing typeHandlerInt = null;
-        AbstractProcessing typeHandlerFlt = null;
-        AbstractProcessing typeHandlerStr = null;
+        FileWriter fwInteger;
+        FileWriter fwFloat;
+        FileWriter fwString;
         try {
-            fwInteger = new FileWriterInteger(outputPath, overwrite);
-            fwFloat = new FileWriterFloat(outputPath, overwrite);
-            fwString = new FileWriterString(outputPath, overwrite);
-            if (statistic != 0) {
-                //TODO подумать как это оптимизировать, т.к. ухудшает читаемость
-                boolean flag = statistic != 1;
-                typeHandlerInt = new IntegerType(flag);
-                typeHandlerFlt = new FloatType(flag);
-                typeHandlerStr = new StringType(flag);
-            }
+            fwInteger = new FileWriter(outputPath + FileTypes.INTEGER.getType(), overwrite, statistic);
+            fwFloat = new FileWriter(outputPath + FileTypes.FLOAT.getType(), overwrite, statistic);
+            fwString = new FileWriter(outputPath + FileTypes.STRING.getType(), overwrite, statistic);
             for (String it : path) {
-                FileReaderAdapter fileReaderAdapter = new FileReaderAdapter(it);
-                while (fileReaderAdapter.hasNext()) {
-                    Scanner sc = new Scanner(fileReaderAdapter.readNext());
+                try {
+                    Scanner sc = new Scanner(new File(it));
                     sc.useLocale(Locale.US);
-                    if (sc.hasNextInt()) {
-                        String value = sc.next();
-                        if (statistic != 0) {
-                            typeHandlerInt.pushStatistic(Integer.parseInt(value));
+                    while (sc.hasNextLine()) {
+                        String value = sc.nextLine();
+                        try {
+                            fwInteger.writeToFile(value, Integer.parseInt(value));
+                        } catch (Exception e) {
+                            try {
+                                fwFloat.writeToFile(value, Float.parseFloat(value));
+                            } catch (Exception ex) {
+                                fwString.writeToFile(value, value);
+                            }
                         }
-                        pushToCorrectFIle(value, fwInteger);
-                    } else if (sc.hasNextFloat()) {
-                        String value = sc.next();
-                        if (statistic != 0) {
-                            typeHandlerFlt.pushStatistic(Float.parseFloat(value));
-                        }
-                        pushToCorrectFIle(value, fwFloat);
-                    } else {
-                        String value = sc.next();
-                        if (statistic != 0) {
-                            typeHandlerStr.pushStatistic(value);
-                        }
-                        pushToCorrectFIle(value, fwString);
                     }
-                }
-                if (statistic != 0) {
-                    typeHandlerInt.printStatistic();
-                    typeHandlerFlt.printStatistic();
-                    typeHandlerStr.printStatistic();
+                } catch (FileNotFoundException e) {
+                    System.out.println(e.getMessage());
                 }
             }
             fwInteger.close();
-            fwString.close();
             fwFloat.close();
-
+            fwString.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    public void pushToCorrectFIle(String value, FileWriterAbstract fw) {
-        try {
-            fw.writeToFile(value);
-        }   catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-        //TODO add logs
-            System.out.println("TUTA PUSHIT     " + value);
     }
 
     enum FileTypes {
