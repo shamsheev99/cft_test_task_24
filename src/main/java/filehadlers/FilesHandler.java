@@ -2,6 +2,10 @@ package filehadlers;
 import filehadlers.filewriters.FileWriterFloat;
 import filehadlers.filewriters.FileWriterInteger;
 import filehadlers.filewriters.FileWriterString;
+import statistictypehandlers.AbstractProcessing;
+import statistictypehandlers.types.FloatType;
+import statistictypehandlers.types.IntegerType;
+import statistictypehandlers.types.StringType;
 
 import java.io.IOException;
 import java.util.*;
@@ -10,11 +14,13 @@ public class FilesHandler {
     private List<String> path = new ArrayList<>();
     private final String outputPath;
     private final boolean overwrite;
+    private final int statistic;
 
 
-    public FilesHandler(String filePaths, String outputPath, String prefix, boolean overwrite) {
+    public FilesHandler(String filePaths, String outputPath, String prefix, boolean overwrite, int statistic) {
         this.outputPath = outputPath + prefix;
         this.overwrite = overwrite;
+        this.statistic = statistic;
         convertToList(filePaths);
         checkType();
     }
@@ -27,26 +33,49 @@ public class FilesHandler {
         FileWriterAbstract fwInteger;
         FileWriterAbstract fwFloat;
         FileWriterAbstract fwString;
+        AbstractProcessing typeHandlerInt = null;
+        AbstractProcessing typeHandlerFlt = null;
+        AbstractProcessing typeHandlerStr = null;
         try {
             fwInteger = new FileWriterInteger(outputPath, overwrite);
             fwFloat = new FileWriterFloat(outputPath, overwrite);
             fwString = new FileWriterString(outputPath, overwrite);
-
+            if (statistic != 0) {
+                //TODO подумать как это оптимизировать, т.к. ухудшает читаемость
+                boolean flag = statistic != 1;
+                typeHandlerInt = new IntegerType(flag);
+                typeHandlerFlt = new FloatType(flag);
+                typeHandlerStr = new StringType(flag);
+            }
             for (String it : path) {
                 FileReaderAdapter fileReaderAdapter = new FileReaderAdapter(it);
                 while (fileReaderAdapter.hasNext()) {
                     Scanner sc = new Scanner(fileReaderAdapter.readNext());
                     sc.useLocale(Locale.US);
                     if (sc.hasNextInt()) {
-                        //TODO считать значение и вызвать статистику
-                        pushToCorrectFIle(sc.next(), fwInteger);
+                        String value = sc.next();
+                        if (statistic != 0) {
+                            typeHandlerInt.pushStatistic(Integer.parseInt(value));
+                        }
+                        pushToCorrectFIle(value, fwInteger);
                     } else if (sc.hasNextFloat()) {
-                        //TODO считать значение и вызвать статистику
-                        pushToCorrectFIle(sc.next(), fwFloat);
+                        String value = sc.next();
+                        if (statistic != 0) {
+                            typeHandlerFlt.pushStatistic(Float.parseFloat(value));
+                        }
+                        pushToCorrectFIle(value, fwFloat);
                     } else {
-                        pushToCorrectFIle(sc.next(), fwString);
-                        //TODO вызвать статистику
+                        String value = sc.next();
+                        if (statistic != 0) {
+                            typeHandlerStr.pushStatistic(value);
+                        }
+                        pushToCorrectFIle(value, fwString);
                     }
+                }
+                if (statistic != 0) {
+                    typeHandlerInt.printStatistic();
+                    typeHandlerFlt.printStatistic();
+                    typeHandlerStr.printStatistic();
                 }
             }
             fwInteger.close();

@@ -14,7 +14,14 @@ public class Program {
         for (String key : parsedArgs.keySet()) {
             System.out.println(key + " parsed args " + parsedArgs.get(key));
         }
-        FilesHandler filesHandler = new FilesHandler(parsedArgs.get("files"), parsedArgs.get("o"),parsedArgs.get("p"), parsedArgs.get("a").equals("true"));
+        //TODO изменить парсер чтобы не надо было заводить интовую переменную, а передавать сразу с мапы
+        int flagStatistic = 0;
+        if (parsedArgs.get("s").equals("true")) {
+            flagStatistic = 1;
+        } else if (parsedArgs.get("f").equals("true")) {
+            flagStatistic = 2;
+        }
+        FilesHandler filesHandler = new FilesHandler(parsedArgs.get("files"), parsedArgs.get("o"),parsedArgs.get("p"), parsedArgs.get("a").equals("true"), flagStatistic);
 
 
 
