@@ -1,4 +1,8 @@
-package filehadlers;
+package file;
+
+import file.statistic.FloatWriter;
+import file.statistic.IntegerWriter;
+import file.statistic.StringWriter;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,24 +57,19 @@ public class FilesHandler {
         FileWriter fwFloat;
         FileWriter fwString;
         try {
-            fwInteger = new FileWriter(outputPath + FileTypes.INTEGER.getType(), overwrite, statistic);
-            fwFloat = new FileWriter(outputPath + FileTypes.FLOAT.getType(), overwrite, statistic);
-            fwString = new FileWriter(outputPath + FileTypes.STRING.getType(), overwrite, statistic);
+            fwInteger = new IntegerWriter(outputPath, overwrite, statistic);
+            fwFloat = new FloatWriter(outputPath, overwrite, statistic);
+            fwString = new StringWriter(outputPath, overwrite, statistic);
             for (String it : path) {
                 try {
                     Scanner sc = new Scanner(new File(it));
                     sc.useLocale(Locale.US);
                     while (sc.hasNextLine()) {
+//                     //   TODO сделать проверку регексом
                         String value = sc.nextLine();
-                        try {
-                            fwInteger.writeToFile(value, Integer.parseInt(value));
-                        } catch (Exception e) {
-                            try {
-                                fwFloat.writeToFile(value, Float.parseFloat(value));
-                            } catch (Exception ex) {
-                                fwString.writeToFile(value, value);
-                            }
-                        }
+                        if (value.matches("^[+-]?\\d+$")) fwInteger.writeToFile(value);
+                        else if (!value.isEmpty() && value.matches("^\\d*[.]\\d+"))  fwFloat.writeToFile(value);
+                        else  fwString.writeToFile(value);
                     }
                 } catch (FileNotFoundException e) {
                     System.out.println(e.getMessage());
@@ -81,19 +80,6 @@ public class FilesHandler {
             fwString.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
-        }
-    }
-
-    enum FileTypes {
-        INTEGER("integer.txt"), FLOAT("float.txt"), STRING("string.txt");
-        private final String type;
-
-        FileTypes(String type) {
-            this.type = type;
-        }
-
-        public String getType() {
-            return type;
         }
     }
 }

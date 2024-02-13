@@ -1,6 +1,6 @@
-package statistictypehandlers.types;
+package statistic.types;
 
-import statistictypehandlers.AbstractStatisticHandler;
+import statistic.AbstractStatisticHandler;
 
 public class FloatType extends AbstractStatisticHandler {
     public FloatType(boolean statisticFlag) {

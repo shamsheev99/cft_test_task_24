@@ -1,6 +1,6 @@
 package parser;
 
-import defaultargs.DefaultMap;
+import args.DefaultMap;
 import org.apache.commons.cli.*;
 
 import java.util.*;

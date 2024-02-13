@@ -1,4 +1,4 @@
-package defaultargs;
+package args;
 
 
 import java.util.HashMap;
@@ -9,7 +9,7 @@ public class DefaultMap {
             map.put("a", "false");
             map.put("o", "./");
             map.put("p", "");
-            map.put("s", "0");
+            map.put("s", "not");
             map.put("files","");
             return map;
     }

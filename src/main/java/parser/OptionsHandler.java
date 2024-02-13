@@ -1,6 +1,6 @@
 package parser;
 
-import defaultargs.DefaultMap;
+import args.DefaultMap;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
@@ -40,12 +40,12 @@ public class OptionsHandler {
         HashMap<String, String> resultMapForConvert = DefaultMap.getDefaultHashMap();
         for (Option option : options) {
             if (option.getOpt().equals("s")) {
-                resultMapForConvert.put("s", "1");
+                resultMapForConvert.put("s", "short");
             }
             if (option.getOpt().equals("f")) {
-                resultMapForConvert.put("f", "2");
+                resultMapForConvert.put("f", "full");
             }
-                if (option.getValue() == null) {
+            if (option.getValue() == null) {
                 resultMapForConvert.put(option.getOpt(), "true");
             } else {
                 resultMapForConvert.put(option.getOpt(), option.getValue());

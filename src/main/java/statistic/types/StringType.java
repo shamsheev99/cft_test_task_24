@@ -1,6 +1,6 @@
-package statistictypehandlers.types;
+package statistic.types;
 
-import statistictypehandlers.AbstractStatisticHandler;
+import statistic.AbstractStatisticHandler;
 
 public class StringType extends AbstractStatisticHandler {
     public StringType(boolean statisticType) {

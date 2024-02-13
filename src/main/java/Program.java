@@ -1,5 +1,5 @@
 
-import filehadlers.FilesHandler;
+import file.FilesHandler;
 import parser.ParserArguments;
 
 import java.util.HashMap;

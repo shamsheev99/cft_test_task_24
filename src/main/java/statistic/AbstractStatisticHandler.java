@@ -1,4 +1,4 @@
-package statistictypehandlers;
+package statistic;
 
 public abstract class AbstractStatisticHandler {
     protected boolean statisticFlag;
