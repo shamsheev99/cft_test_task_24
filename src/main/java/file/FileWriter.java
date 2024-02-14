@@ -1,15 +1,16 @@
 package file;
 
+import org.apache.log4j.Logger;
+import parser.ParserArguments;
 import statistic.AbstractStatisticHandler;
-import statistic.types.FloatType;
-import statistic.types.IntegerType;
-import statistic.types.StringType;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public abstract class FileWriter {
+    private static final Logger log = Logger.getLogger(FileWriter.class);
+
     protected String filePath;
     protected FileOutputStream fos;
     protected int count = 0;
@@ -19,6 +20,7 @@ public abstract class FileWriter {
     protected boolean isShortStat;
 
     protected FileWriter(String filePath, boolean overwrite, String statistic) {
+        log.debug("Filepath: " + filePath);
         this.filePath = filePath;
         this.overwrite = overwrite;
         isNotNeedStat = statistic.equals(Statistic.NOTSTAT.getStat());
@@ -30,15 +32,17 @@ public abstract class FileWriter {
 
     public void writeToFile(String message) throws FileNotFoundException {
         if (count == 0) {
+            log.debug("Created new FileOutputStream");
             fos = new FileOutputStream(filePath, overwrite);
         }
-        System.out.println(filePath + "   TUTA PISHET MESASGE    /" + message);
         try {
             fos.write((message + System.lineSeparator()).getBytes());
             if (typeHandler != null) {
                 writeToStatistic(message);
+                log.debug("Message add to statistic: "+ message);
             }
         } catch (IOException e) {
+            log.error(e.getMessage());
             System.out.println(e.getMessage());
             throw new RuntimeException(e);
         }

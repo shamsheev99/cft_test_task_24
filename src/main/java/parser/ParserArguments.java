@@ -2,13 +2,14 @@ package parser;
 
 import args.DefaultMap;
 import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
 
 public class ParserArguments {
     private final String[] args;
-
+    private static final Logger log = Logger.getLogger(ParserArguments.class);
     public ParserArguments(String[] args) {
         this.args = args;
     }
@@ -17,14 +18,14 @@ public class ParserArguments {
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         Options options = OptionsHandler.setOptions();
-        HashMap<String, String> parsedArgs = DefaultMap.getDefaultHashMap();
+        HashMap<String, String> parsedArgs;
         try {
             CommandLine cmdLine = parser.parse(options, args, false);
             parsedArgs = OptionsHandler.convertOptionsToMap(cmdLine.getOptions());
             parsedArgs.put("files", fromListToStringCurrentFormat(cmdLine.getArgList()));
             return parsedArgs;
         } catch (ParseException e) {
-            System.out.println("Error parsing arguments, using default settings" + e.getMessage());
+            log.error("Error parsing arguments, using default settings " + e.getMessage());
             formatter.printHelp("file content filter utility", options, true);
             throw new IllegalArgumentException("Error parsing arguments");
         }

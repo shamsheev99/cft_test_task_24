@@ -1,8 +1,10 @@
 package statistic.types;
 
+import org.apache.log4j.Logger;
 import statistic.AbstractStatisticHandler;
 
 public class FloatType extends AbstractStatisticHandler {
+    private static final Logger log = Logger.getLogger(FloatType.class);
     public FloatType(boolean statisticFlag) {
         super(statisticFlag);
         min = 0f;
@@ -27,6 +29,7 @@ public class FloatType extends AbstractStatisticHandler {
 
     @Override
     public void printStatistic() {
+        log.info("printStatistics "+ count + " elements");
         System.out.println("-----------------------------------------------");
         System.out.println("Количество элементов типа Float: " + count);
         if (statisticFlag) {

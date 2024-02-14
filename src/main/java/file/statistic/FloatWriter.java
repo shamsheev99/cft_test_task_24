@@ -1,11 +1,11 @@
 package file.statistic;
 
 import file.FileWriter;
+import org.apache.log4j.Logger;
 import statistic.types.FloatType;
 
-import java.io.FileNotFoundException;
-
 public class FloatWriter extends FileWriter {
+    private static final Logger log = Logger.getLogger(FloatWriter.class);
     public FloatWriter(String filePath, boolean overwrite, String statistic) {
         super(filePath + FileTypes.FLOAT.getType(), overwrite, statistic);
         if (!isNotNeedStat) {
@@ -14,8 +14,9 @@ public class FloatWriter extends FileWriter {
     }
 
     @Override
-    public void writeToStatistic(String message) throws FileNotFoundException {
+    public void writeToStatistic(String message) {
         typeHandler.pushStatistic(Float.parseFloat(message));
+        log.debug("statistic pushed for message " + message );
     }
 
     /* if (!statistic.equals("0")) {

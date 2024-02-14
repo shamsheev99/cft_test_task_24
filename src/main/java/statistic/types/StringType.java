@@ -1,8 +1,10 @@
 package statistic.types;
 
+import org.apache.log4j.Logger;
 import statistic.AbstractStatisticHandler;
 
 public class StringType extends AbstractStatisticHandler {
+    private static final Logger log = Logger.getLogger(StringType.class);
     public StringType(boolean statisticType) {
         super(statisticType);
         min = 0;
@@ -22,6 +24,7 @@ public class StringType extends AbstractStatisticHandler {
 
     @Override
     public void printStatistic() {
+        log.info("printStatistics: "+ count + " elements");
         System.out.println("-----------------------------------------------");
         System.out.println("Количество элементов типа String: " + count);
         if (statisticFlag) {

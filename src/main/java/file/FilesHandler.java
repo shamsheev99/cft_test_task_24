@@ -1,8 +1,10 @@
 package file;
 
+import args.DefaultMap;
 import file.statistic.FloatWriter;
 import file.statistic.IntegerWriter;
 import file.statistic.StringWriter;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,6 +15,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class FilesHandler {
+    private static final Logger log = Logger.getLogger(FilesHandler.class);
     private List<String> path = new ArrayList<>();
     private String outputPath;
     private boolean overwrite;
@@ -28,11 +31,13 @@ public class FilesHandler {
             checkValidPathFile(parameters.get("o"));
             this.outputPath = parameters.get("o");
         } catch (NotDirectoryException e) {
+            log.error(parameters.get("o") + " is not a directory, using default directory " + e.getMessage());
             System.out.println(e.getMessage() + " Use default directory ./");
             this.outputPath = "./";
         }
         if (!outputPath.endsWith("/")) outputPath += "/";
         outputPath += parameters.get("p");
+        log.info("Output path:" + outputPath);
         this.overwrite = parameters.get("a").equals("true");
         this.statistic = parameters.get("s");
         convertToList(parameters.get("files"));
@@ -42,9 +47,10 @@ public class FilesHandler {
     private static void checkValidPathFile(String currentPath) throws NotDirectoryException {
         Path p = Path.of(currentPath);
         if (Files.isWritable(p) && Files.isDirectory(p)) {
-            System.out.println("zxczxc");
+            log.info("Path " + currentPath + " is valid");
             return;
         }
+        log.error("Path " + currentPath + " is not valid");
         throw new NotDirectoryException("Directory " + p + " not found");
     }
 
@@ -65,13 +71,23 @@ public class FilesHandler {
                     Scanner sc = new Scanner(new File(it));
                     sc.useLocale(Locale.US);
                     while (sc.hasNextLine()) {
-//                     //   TODO сделать проверку регексом
                         String value = sc.nextLine();
-                        if (value.matches("^[+-]?\\d+$")) fwInteger.writeToFile(value);
-                        else if (!value.isEmpty() && value.matches("^\\d*[.]\\d+"))  fwFloat.writeToFile(value);
-                        else  fwString.writeToFile(value);
+                        if (value.matches("^[+-]?\\d+$")) {
+                            fwInteger.writeToFile(value);
+                            log.debug(value + " detected as integer");
+                        }
+                        else if (value.matches("^\\d*[.]\\d+")) {
+                            fwFloat.writeToFile(value);
+                            log.debug(value + " detected as float");
+                        }
+                        else {
+                            fwString.writeToFile(value);
+                            log.debug(value + " detected as string");
+
+                        }
                     }
                 } catch (FileNotFoundException e) {
+                    log.error(it + " file not found: " + e.getMessage());
                     System.out.println(e.getMessage());
                 }
             }
@@ -79,7 +95,7 @@ public class FilesHandler {
             fwFloat.close();
             fwString.close();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
     }
 }

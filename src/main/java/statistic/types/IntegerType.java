@@ -1,8 +1,10 @@
 package statistic.types;
 
+import org.apache.log4j.Logger;
 import statistic.AbstractStatisticHandler;
 
 public class IntegerType extends AbstractStatisticHandler {
+    private static final Logger log = Logger.getLogger(IntegerType.class);
     public IntegerType(boolean statisticFlag) {
         super(statisticFlag);
         min = 0;
@@ -28,6 +30,7 @@ public class IntegerType extends AbstractStatisticHandler {
 
     @Override
     public void printStatistic() {
+        log.info("printStatistics "+ count + " elements");
         System.out.println("-----------------------------------------------");
         System.out.println("Количество элементов типа Integer: " + count);
         if (statisticFlag) {

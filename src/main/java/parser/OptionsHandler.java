@@ -4,8 +4,6 @@ import args.DefaultMap;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 
 public class OptionsHandler {
@@ -51,12 +49,6 @@ public class OptionsHandler {
                 resultMapForConvert.put(option.getOpt(), option.getValue());
             }
         }
-
         return resultMapForConvert;
     }
-
-    private static boolean checkCorrectDirectory(String directory) {
-        return (Files.isDirectory(Path.of(directory)));
-    }
-
 }
