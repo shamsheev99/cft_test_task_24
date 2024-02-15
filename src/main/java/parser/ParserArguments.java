@@ -14,20 +14,26 @@ public class ParserArguments {
         this.args = args;
     }
 
-    public HashMap<String, String> parse() {
-        CommandLineParser parser = new DefaultParser();
+    public HashMap<String, String> parse() throws Exception {
         HelpFormatter formatter = new HelpFormatter();
         Options options = OptionsHandler.setOptions();
+
+        if (args.length == 0) {
+            formatter.printHelp("file content filter utility", options, true);
+            throw new IllegalArgumentException("Please use args");
+        }
+        CommandLineParser parser = new DefaultParser();
         HashMap<String, String> parsedArgs;
         try {
             CommandLine cmdLine = parser.parse(options, args, false);
+            if (cmdLine.getArgList().isEmpty()) throw new ParseException("Укажите входные файлы");
             parsedArgs = OptionsHandler.convertOptionsToMap(cmdLine.getOptions());
             parsedArgs.put("files", fromListToStringCurrentFormat(cmdLine.getArgList()));
             return parsedArgs;
         } catch (ParseException e) {
             log.error("Error parsing arguments, using default settings " + e.getMessage());
             formatter.printHelp("file content filter utility", options, true);
-            throw new IllegalArgumentException("Error parsing arguments");
+            throw new Exception(e.getMessage());
         }
     }
 

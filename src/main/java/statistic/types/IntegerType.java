@@ -30,6 +30,7 @@ public class IntegerType extends AbstractStatisticHandler {
 
     @Override
     public void printStatistic() {
+        if (count == 0) return;
         log.info("printStatistics "+ count + " elements");
         System.out.println("-----------------------------------------------");
         System.out.println("Количество элементов типа Integer: " + count);
