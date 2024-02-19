@@ -22,8 +22,8 @@ public class IntegerType extends AbstractStatisticHandler {
         }
         count++;
         sum = (Integer) sum + data;
-        if (data < (Integer)min) min = data;
-        if (data > (Integer)max) max = data;
+        min = Math.min(data, (Integer)min);
+        max = Math.max(data, (Integer)max);
         average = (Integer)sum / count;
 
     }

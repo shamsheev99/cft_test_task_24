@@ -22,8 +22,8 @@ public class FloatType extends AbstractStatisticHandler {
         }
         count++;
         sum = (Float) sum + data;
-        if (data < (Float) min) min = data;
-        if (data > (Float) max) max = data;
+        min = Math.min(data, (Float)min);
+        max = Math.max(data, (Float)max);
         average = (Float) sum / count;
     }
 

@@ -18,8 +18,8 @@ public class StringType extends AbstractStatisticHandler {
             min = Integer.MAX_VALUE;
         }
         count++;
-        if ((Integer)min > data.length()) min = data.length();
-        if ((Integer)max < data.length()) max = data.length();
+        min = Math.min(data.length(), (Integer)min);
+        max = Math.max(data.length(), (Integer)max);
     }
 
     @Override
